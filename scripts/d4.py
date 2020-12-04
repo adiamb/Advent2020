@@ -41,8 +41,9 @@ class passport(object):
     
     def passIdCheck(self):
         """Passport ID check
+        regex from https://github.com/joelgrus/advent2020/blob/master/advent2020/day04.py
         """
-        if self.pid.isdigit() and len(self.pid) == 9 and self.pid[:2] == '00':
+        if re.match(r"^[0-9]{9}$", self.pid):
             return True
         else:
             return False
@@ -69,18 +70,10 @@ class passport(object):
             return False
 
     def hclCheck(self):
-        if self.hcl[0] == '#':
-            totalLen = len(self.hcl)-1
-            intChar = re.findall('[0-9]', self.hcl)
-            alhChar = re.findall('[a-f]', self.hcl)
-            if len(intChar) == totalLen:
-                return True
-            elif len(alhChar) == totalLen:
-                return True
-            elif len(intChar) + len(alhChar) == totalLen:
-                return True
-            else:
-                return False
+        """regex from https://github.com/joelgrus/advent2020/blob/master/advent2020/day04.py
+        """
+        if re.match(r"^#[0-9a-f]{6}$", self.hcl):
+            return True
         else:
             return False
     
@@ -90,31 +83,30 @@ class passport(object):
         self.hgtCheck(),
         self.eclCheck(),
         self.hclCheck()]
+        print(boolCheck)
         if all(boolCheck):
             return True
         else:
             return False
+def main():
+    passDict = parseBatch(inputFile = 'inputs/d4_p1.input')
+    validCounter = Counter()
+    for k1, v1 in passDict.items():
+        validCounter[len(v1)] += 1
+        if len(v1) >= 7:
+            if 'cid' not in v1:
+                validCounter['cid'] += 1
+                passInst=passport(v1)
+                if passInst.checkAll() == True:
+                    validCounter['valid'] += 1
+            elif len(v1) == 8:
+                passInst=passport(v1)
+                if passInst.checkAll() == True:
+                    validCounter['valid'] += 1
+    print('The answerr to part 1 is {}'.format(validCounter.get(8)+validCounter.get('cid')))
+    print('The answerr to part 2 is {}'.format(validCounter.get('valid')))
 
-passDict = parseBatch(inputFile = 'inputs/d4_p1.input')
-
-valid = 0
-validCounter = Counter()
-for k1, v1 in passDict.items():
-    validCounter[len(v1)] += 1
-    #for k2, v2 in  v1.items():
-    if len(v1) >= 7:
-        if 'cid' not in v1:
-            validCounter['cid'] += 1
-            passInst=passport(v1)
-            if passInst.checkAll() == True:
-                validCounter['valid'] += 1
-
-
-
-
-print('The answerr to part 1 is {}'.format(validCounter.get(8)+validCounter.get('cid')))
-
-
+if __name__ == "__main__":main()
 
 #d=passport(passDict.get(1))
 #d.yearCheck(yearParam =[1920, 2002, 2010, 2020, 2020, 2030])
