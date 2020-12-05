@@ -43,7 +43,11 @@ def main():
             colId=recCol(colArr, ncols)
             print(rowId, colId)
             seatArray.append(rowId*8+colId)
-    print('The answer to part1 is {}'.format(max(seatArray)))
+    min_, max_ = min(seatArray), max(seatArray)
+    mySeat=next(i for i in range(min_, max_) if i not in seatArray )
+    print('The answer to part1 is {}'.format(max_))
+    print('The answer to part2 is {}'.format(mySeat))
+
 
 if __name__ == "__main__":main()
 # ncols = 0, 7
