@@ -1,8 +1,6 @@
 import math
 
-
 def recRowCol(colArr, ncolrow, col):
-    print(ncolrow)
     if len(colArr) != 0:
         curR = colArr.pop(0)
         if curR == 'L' or curR =="F":
@@ -26,16 +24,12 @@ def main():
             bHex = line.strip()
             rowArr=list(bHex[:7])
             colArr=list(bHex[7:])
-            #rowId=recRow(rowArr, nrows)
-            #colId=recCol(colArr, ncols)
             rowId=recRowCol(rowArr, nrows, col=False)
             colId=recRowCol(colArr, ncols, col=True)
-            #print(rowId, colId)
             seatArray.append(rowId*8+colId)
     min_, max_ = min(seatArray), max(seatArray)
     mySeat=next(i for i in range(min_, max_) if i not in seatArray )
     print('The answer to part1 is {}'.format(max_))
     print('The answer to part2 is {}'.format(mySeat))
-
 
 if __name__ == "__main__":main()
