@@ -4,6 +4,7 @@ from collections import defaultdict
 def parseInput(inputFile):
     #inputFile = 'inputs/d7_p1.input'
     masterBagDict = defaultdict(list)
+    bagCounterDict = defaultdict(dict)
     with open(inputFile) as inFile:
         for line in inFile:
             lineParse = line.strip().split('contain')
@@ -17,10 +18,11 @@ def parseInput(inputFile):
                 typeBag = re.sub('[0-9]','', bag).strip()
                 if 'no other' not in typeBag:
                     masterBagDict[typeBag].append(parent)
-    return masterBagDict
+                    bagCounterDict[parent][typeBag] = numBag
+    return masterBagDict, bagCounterDict
 
 
-def recurseDict2(BagDict, keyList, keyCheck, traversal):
+def recurseColor(BagDict, keyList, keyCheck, traversal):
     print(len(keyList), keyCheck)
     if len(keyList)==0:
         return traversal
@@ -29,14 +31,20 @@ def recurseDict2(BagDict, keyList, keyCheck, traversal):
         if keyCheck in BagDict:
             keyList.extend(BagDict.get(keyCheck))
             traversal.update(keyList)
-        return(recurseDict2(BagDict, keyList, keyCheck, traversal))
+        return(recurseColor(BagDict, keyList, keyCheck, traversal))
+
+def bagCounter(bagCounterDict, clr):
+    """adapted from https://github.com/fogleman/AdventOfCode2020/blob/main/07.py"""
+    return sum(n + n * bagCounter(bagCounterDict, c) for c, n in bagCounterDict[clr].items())
 
 
 def main():
     inputFile = 'inputs/d7_p1.input'
-    masterBagDict = parseInput(inputFile)
-    uniqClrs=recurseDict2(BagDict=masterBagDict, keyList=['shiny gold'], keyCheck='', traversal=set())
+    masterBagDict, bagCounterDict = parseInput(inputFile)
+    uniqClrs=recurseColor(BagDict=masterBagDict, keyList=['shiny gold'], keyCheck='', traversal=set())
+    bagN= bagCounter(bagCounterDict, clr='shiny gold')  
     print('Answer to part 1 is {}'.format(len(uniqClrs)))
+    print('Answer to part 2 is {}'.format(bagN))
 
 if __name__ == "__main__":main()
 
