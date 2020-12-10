@@ -28,17 +28,13 @@ class console(object):
         self.pointer += op
         return self.pointer
 
-def main():
-    inputFile = 'inputs/d8_p1.input'
-    consol=[]
-    for line in open(inputFile):
-        op=(line.strip().split(' ')[0], int(line.strip().split(' ')[1]))
-        consol.append(op)
+
+def runConsole(consol):
     a=console(consol)
     seenPoints = set()
     while a.pointer < len(consol):
         if a.pointer in seenPoints:
-            break
+            return a.acc, False
         seenPoints.add(a.pointer)
         op, n = a.Instructions[a.pointer]
         #print('op-{} n-{} pointer-{} acc-{}'.format(op, n, a.pointer, a.acc))
@@ -48,7 +44,32 @@ def main():
             a.pointer = a.accOP()
         else:
             a.pointer = a.nOP()
-    print('The Answer to part1 is {}'.format(a.acc))
+    return a.acc, True
+
+def swapIns(consol):
+    opChDict = {'nop':'jmp', 'jmp':'nop'}
+    for i in range(len(consol)):
+        op, n = consol[i]
+        if op in opChDict:
+            p = list(consol)
+            p[i] = (opChDict.get(op), n)
+            #print(consol[i])
+            acc, okay = runConsole(p)
+            if okay:
+                return acc
+        
+
+def main():
+    inputFile = 'inputs/d8_p1.input'
+    consol=[]
+    for line in open(inputFile):
+        op=(line.strip().split(' ')[0], int(line.strip().split(' ')[1]))
+        consol.append(op)
+    p1=runConsole(consol)[0]
+    p2=swapIns(consol)
+    print('The Answer to part1 is {}'.format(p1))
+    print('The Answer to part2 is {}'.format(p2))
+
 
 if __name__ == "__main__":main()
     
